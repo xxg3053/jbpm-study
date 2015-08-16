@@ -4,7 +4,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.drools.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,14 +21,25 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/doLogin",method=RequestMethod.POST)
-	public String doLogin(String userName,HttpSession session,Model model){
+	public String doLogin(String userName,String type,HttpSession session,Model model){
 		if(StringUtils.isEmpty(userName)){
 			model.addAttribute("message","用户名不能为空!");
 			return "login";
-		}else{
-			session.setAttribute("userName", userName);
 		}
-		return "redirect:/leave/index";
+		if(StringUtils.isNotEmpty(type)){
+			session.setAttribute("userName", userName);
+			
+			if(type.equals("leave")){
+				return "redirect:/leave/index";
+			}else if(type.equals("sign")){
+				return "redirect:/sign/index";
+			}else{
+				return "index";
+			}
+		}else{
+			return "index";
+		}
+		
 	}
 	
 	@RequestMapping(value="/logout",method=RequestMethod.GET)

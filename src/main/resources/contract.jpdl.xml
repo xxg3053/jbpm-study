@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process name="contract" xmlns="http://jbpm.org/4.4/jpdl">
+	<start g="11,241,48,48" name="start1">
+
+<transition g="-66,-18" name="to 填写合同" to="填写合同"/>
+
+</start>
+
+<task candidate-groups="user_dept" form="contract.jsp" g="88,241,92,52" name="填写合同">
+
+<transition g="-17,-3" name="to fork1" to="fork1"/>
+
+<transition g="-26,-16" name="to 用户1审批" to="用户1审批"/>
+
+<transition g="-34,-2" name="to 用户2审批" to="用户2审批"/>
+
+</task>
+
+<task assignee="test1" form="audit.jsp" g="172,119,92,52" name="用户1审批">
+
+<transition g="431,115:-43,-18" name="批准" to="财务部"/>
+
+<transition g="127,155:-21,-17" name="驳回" to="填写合同"/>
+
+</task>
+
+<task assignee="test2" form="audit.jsp" g="183,343,92,52" name="用户2审批">
+
+<transition g="439,385:-43,-18" name="批准" to="财务部"/>
+
+<transition g="106,368:-21,-17" name="驳回" to="填写合同"/>
+
+</task>
+
+<fork g="257,227,48,48" name="fork1">
+
+<transition g="-41,-18" name="to 计划部" to="计划部"/>
+
+<transition g="-26,-15" name="to 法务部" to="法务部"/>
+
+<transition g="-34,-19" name="to IT规划部" to="IT规划部"/>
+
+</fork>
+
+<task candidate-groups="plan_dept" form="audit.jsp" g="387,294,92,52" name="计划部">
+
+<transition g="-25,-12" name="批准" to="join1"/>
+
+<transition g="308,329:-66,-18" name="驳回" to="填写合同"/>
+
+</task>
+
+<task candidate-groups="justice_dept" form="audit.jsp" g="384,222,92,52" name="法务部">
+
+<transition g="-13,-16" name="批准" to="join1"/>
+
+<transition g="304,300:-2,-2" name="驳回" to="填写合同"/>
+
+</task>
+
+<task candidate-groups="it_dept" form="audit.jsp" g="380,144,92,52" name="IT规划部">
+
+<transition g="281,183:-31,-11" name="驳回" to="填写合同"/>
+
+<transition g="-24,-19" name="批准" to="join1"/>
+
+</task>
+
+<join g="569,244,92,52" multiplicity="3" name="join1">
+
+<transition g="-54,-18" name="to 财务部" to="财务部"/>
+
+</join>
+
+<task candidate-groups="finance_dept" form="money_audit.jsp" g="691,244,92,52" name="财务部">
+
+<transition g="-42,-18" name="to end1" to="end1"/>
+
+<transition g="739,430;405,436;135,435:-66,-18" name="to 填写合同" to="填写合同"/>
+
+</task>
+
+<end g="842,246,48,48" name="end1"/>
+</process>

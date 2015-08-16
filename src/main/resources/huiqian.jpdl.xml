@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process name="huiqian" xmlns="http://jbpm.org/4.4/jpdl">
+<start g="223,1,80,40" name="start1">
+      <transition to="申请"/>
+   </start>
+  
+   <task assignee="#{staff}" g="212,75,70,38" name="申请"> 
+      <transition g="-30,-7" name="会签" to="领导会签"/>
+   </task>
+   
+   <custom class="com.kenfo.util.CustomSign" g="201,145,92,52" name="领导会签">
+      	<transition g="-46,-7" name="是否同意" to="判断结果"/>
+   </custom>
+   <decision expr="#{RESULT=='PASS'?'是':'否'}" g="223,230,48,48" name="判断结果">
+      <transition g="-42,-18" name="是" to="end1"/>
+      <transition g="401,172:-25,-10" name="否" to="申请"/>
+   </decision>
+   <end g="226,303,80,40" name="end1"/>
+
+</process>

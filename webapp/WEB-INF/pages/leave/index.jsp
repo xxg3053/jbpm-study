@@ -48,7 +48,7 @@
 					<tr>
 						<td>${item.id}</td>
 						<td>${item.name}</td>
-						<td>${item.version })</td>
+						<td>${item.version}</td>
 						<td><a href="#" class="delete" data-url="<%=request.getContextPath()%>/leave/del?deploymentId=${item.deploymentId}">删除</a>
 						<a href="<%=request.getContextPath()%>/leave/start?id=${item.id}">发起</a>
 						</td>
@@ -77,7 +77,7 @@
 						<td>${item.id}</td>
 						<td>${item.activityName}</td>
 						<td>${item.state}</td>
-						<td><a href="<%=request.getContextPath()%>/leave/delpi?id=${item.id}">删除</a>
+						<td><a class="delete" href="#" data-url="<%=request.getContextPath()%>/leave/delpi?id=${item.id}">删除</a>
 						<a href="<%=request.getContextPath()%>/leave/view?id=${item.id}">查看</a>
 						</td>
 					</tr>

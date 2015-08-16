@@ -64,7 +64,7 @@ public class LeaveController {
 		model.put("taskList", taskList);
 		model.put("hTaskList", hTaskList);
 		model.put("userName", userName);
-		return "leave";
+		return "leave/index";
 	}
 	
 	@RequestMapping(value="/deploy",method=RequestMethod.GET)
@@ -111,7 +111,7 @@ public class LeaveController {
 	public String request(String id,Map<String,Object> model){
 		//申请
 		
-		return "request";
+		return "leave/request";
 	}
 	@RequestMapping(value="/doRequest",method=RequestMethod.POST)
 	public String doRequest(String taskId,String owner,Integer day,String reason,Map<String,Object> model){
@@ -130,7 +130,7 @@ public class LeaveController {
 		model.put("day", taskService.getVariable(id, "day"));
 		model.put("owner", taskService.getVariable(id, "owner"));
 		model.put("reason", taskService.getVariable(id, "reason"));
-		return "manager";
+		return "leave/manager";
 	}
 	
 	@RequestMapping(value="/doManager",method=RequestMethod.POST)
@@ -153,7 +153,7 @@ public class LeaveController {
 		model.put("day", taskService.getVariable(id, "day"));
 		model.put("owner", taskService.getVariable(id, "owner"));
 		model.put("reason", taskService.getVariable(id, "reason"));
-		return "boss";
+		return "leave/boss";
 	}
 	
 	@RequestMapping(value="/doBoss",method=RequestMethod.POST)
@@ -176,7 +176,7 @@ public class LeaveController {
 						.iterator().next());
 		model.put("ac", ac);
 		
-		return "view";
+		return "leave/view";
 	}
 	
 
