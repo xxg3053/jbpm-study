@@ -20,6 +20,7 @@ import org.jbpm.pvm.internal.history.events.TaskActivityStart;
 import org.jbpm.pvm.internal.model.ExecutionImpl;
 import org.jbpm.pvm.internal.session.DbSession;
 import org.jbpm.pvm.internal.task.TaskImpl;
+import org.springframework.stereotype.Service;
 
 /**
  * 会签 自定义活动
@@ -52,7 +53,7 @@ public class CustomSign implements ExternalActivityBehaviour {
 		//子任务1分配给manager
 		TaskImpl subtask1 = mainTask.createSubTask();
 		subtask1.setAssignee("manager");
-		subtask1.setFormResourceName(form);
+		subtask1.setFormResourceName("sign/task");
 		subtask1.setName("领导会签,操作角色:" + "manager");
 		subtask1.setSignalling(false);
 		subtask1.setExecution(executionimpl);
@@ -64,7 +65,7 @@ public class CustomSign implements ExternalActivityBehaviour {
 		//子任务2分配给boss
 		TaskImpl subtask2 = mainTask.createSubTask();
 		subtask2.setAssignee("boss");
-		subtask2.setFormResourceName(form);
+		subtask2.setFormResourceName("sign/task");
 		subtask2.setName("领导会签,操作角色:" + "boss");
 		subtask2.setSignalling(false);
 		subtask2.setExecution(executionimpl);
@@ -84,11 +85,9 @@ public class CustomSign implements ExternalActivityBehaviour {
 	public void signal(ActivityExecution activityExecution, String signalName,
 			Map<String, ?> parms) throws Exception {
 		ExecutionImpl executionImpl = (ExecutionImpl) activityExecution;
-		ProcessInstance pi = (ProcessInstance) executionImpl.getProcessInstance();
 		TaskService taskService = Configuration.getProcessEngine().getTaskService();
 		// 获得活动节点
 		Activity activity = executionImpl.getActivity();
-		List<Task> tasks = taskService.createTaskQuery().processInstanceId(pi.getId()).list();
 		//主task:领导会签 
 		TaskImpl mainTask = (TaskImpl)taskService.createTaskQuery().processInstanceId(executionImpl.getProcessInstance()   
 				.getId()).activityName(mainTaskName).uniqueResult();
@@ -97,7 +96,6 @@ public class CustomSign implements ExternalActivityBehaviour {
 		List<Task> subTaskList = taskService.getSubTasks(mainTask.getId()); 
 		Iterator<Task> iter = subTaskList.iterator();
 		// 循环所有子任务
-		overTasks(executionImpl);
 		while (iter.hasNext()) {
 			Task subTask = iter.next();
 			if (parms.get("name").equals(subTask.getAssignee())) {
@@ -105,11 +103,13 @@ public class CustomSign implements ExternalActivityBehaviour {
 					count++;
 				}
 				
-				DbSession dbsession = EnvironmentImpl.getFromCurrent(DbSession.class); 
-				executionImpl.setHistoryActivityInstanceDbid(executionImpl.getHistoryActivityInstanceDbid()-1);
-				dbsession.update(executionImpl) ; 
-				dbsession.flush(); 
-				//taskService.completeTask(subTask.getId()); // 完成当前会签人子任务
+//				DbSession dbsession = EnvironmentImpl.getFromCurrent(DbSession.class); 
+//				executionImpl.setHistoryActivityInstanceDbid(executionImpl.getHistoryActivityInstanceDbid()-1);
+//				dbsession.update(executionImpl) ; 
+//				dbsession.flush(); 
+				//移除主任务和子任务的关联关系  
+				//mainTask.removeSubTask(subTask);
+				taskService.completeTask(subTask.getId()); // 完成当前会签人子任务
 				
 			}
 		}
