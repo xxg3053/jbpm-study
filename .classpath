@@ -9,7 +9,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jBPM Libraries">
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JBPM libraries">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>

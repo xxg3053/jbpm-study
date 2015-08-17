@@ -6,13 +6,17 @@
    </start>
    <end g="181,469,48,48" name="end1"/>
    <task assignee="#{owner}" form="/leave/request" g="153,129,92,52" name="申请">
+   	  <notification/>
+   	  <reminder duedate="10 minutes" repeat="5 minute"/>
       <transition g="-67,-20" name="to 经理审批" to="经理审批"/>
    </task>
    <task assignee="manager" form="/leave/manager" g="152,239,92,52" name="经理审批">
+   	    <notification/>
       <transition g="-72,-20" name="to exclusive1" to="exclusive1"/>
       <transition g="299,260;297,156:7,-15" name="驳回" to="申请"/>
    </task>
    <task assignee="boss" form="/leave/boss" g="312,404,92,52" name="老板审批">
+         <notification/>
       <transition g="349,495:-45,-20" name="to end1" to="end1"/>
    </task>
    <decision expr="#{day > 3 ? 'to 老板审批' : 'to end1'}" g="178,340,48,48" name="exclusive1">

@@ -5,6 +5,14 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.jbpm.api.Configuration;
+import org.jbpm.api.ExecutionService;
+import org.jbpm.api.HistoryService;
+import org.jbpm.api.IdentityService;
+import org.jbpm.api.ProcessEngine;
+import org.jbpm.api.RepositoryService;
+import org.jbpm.api.TaskService;
+import org.jbpm.api.identity.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/user")
 public class UserController {
 
+		//流程引擎
+		ProcessEngine processEngine = Configuration.getProcessEngine();
+		IdentityService identityService = processEngine.getIdentityService();
+		
 	@RequestMapping(value="/login",method=RequestMethod.GET)
 	public String deploy(Map<String,Object> model){
 		
@@ -21,13 +33,29 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/doLogin",method=RequestMethod.POST)
-	public String doLogin(String userName,String type,HttpSession session,Model model){
+	public String doLogin(String userName,String email,String type,HttpSession session,Model model){
 		if(StringUtils.isEmpty(userName)){
 			model.addAttribute("message","用户名不能为空!");
 			return "login";
 		}
 		if(StringUtils.isNotEmpty(type)){
 			session.setAttribute("userName", userName);
+			if(StringUtils.isEmpty(email)){
+				email = "xxg3053@qq.com";
+			}
+			User u = identityService.findUserById(userName);
+			if(u == null){
+				identityService.createUser(userName, userName, "kenfo", email);
+			}
+			
+			if(identityService.findUserById("manager") == null){
+				//创建经理
+				identityService.createUser("manager", "manager", "kenfo", "xxg3053@qq.com");
+			}
+			if(identityService.findUserById("boss") == null){
+				//创建老板
+				identityService.createUser("boss", "boss", "kenfo", "xxg3053@qq.com");
+			}
 			
 			if(type.equals("leave")){
 				return "redirect:/leave/index";

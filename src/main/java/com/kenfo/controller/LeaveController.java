@@ -9,8 +9,10 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.jbpm.api.Configuration;
+import org.jbpm.api.Execution;
 import org.jbpm.api.ExecutionService;
 import org.jbpm.api.HistoryService;
+import org.jbpm.api.IdentityService;
 import org.jbpm.api.ProcessDefinition;
 import org.jbpm.api.ProcessEngine;
 import org.jbpm.api.ProcessInstance;
@@ -37,10 +39,11 @@ public class LeaveController {
 	ProcessEngine processEngine = Configuration.getProcessEngine();
 	//流程仓库
 	RepositoryService repositoryService = processEngine.getRepositoryService();
-	
+
 	ExecutionService executionService = processEngine.getExecutionService();
 	TaskService taskService = processEngine.getTaskService();
 	HistoryService historyService = processEngine.getHistoryService();
+	IdentityService identityService = processEngine.getIdentityService();
 	
 	@RequestMapping(value="/index",method=RequestMethod.GET)
 	public String index(HttpSession session,  Map<String,Object> model){
@@ -57,7 +60,6 @@ public class LeaveController {
 		List<Task> taskList = taskService.findPersonalTasks(userName);
 		
 		List<HistoryTask> hTaskList = historyService.createHistoryTaskQuery().assignee(userName).list();
-		
 		
 		model.put("processDef", pdList);
 		model.put("piList", piList);
@@ -80,9 +82,7 @@ public class LeaveController {
 		//流程开始
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("owner", session.getAttribute("userName"));
-		map.put("address", "xxg3053@qq.com");
 		executionService.startProcessInstanceById(id, map);
-		
 		return "redirect:index"; 
 	}
 	
@@ -122,6 +122,7 @@ public class LeaveController {
 		//System.out.println("taskId:"+taskId);
 		String result = "to 经理审批";//transitions的name 
 		taskService.completeTask(taskId,result, map);
+		
 		return "redirect:index";
 	}
 	

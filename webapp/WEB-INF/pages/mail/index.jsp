@@ -12,8 +12,14 @@
 <div class="container">
     <ul class="nav nav-tabs" Style="margin-bottom:10px;">
 	  <li role="presentation" class="active"><a href="<%=request.getContextPath()%>/leave/index">流程管理面板</a></li>
-	  <li role="presentation" ><a href="<%=request.getContextPath()%>/leave/deploy">发布</a></li>
-	  <li role="presentation"><a href="#">Messages</a></li>
+	 <li role="presentation" class="dropdown">
+	    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+	      	<span class="glyphicon glyphicon-user" aria-hidden="true"></span> 您好，${userName} <span class="caret"></span>
+	    </a>
+	    <ul class="dropdown-menu">
+	      <li role="presentation"><a href="<%=request.getContextPath()%>/user/logout">退出</a></li>
+	    </ul>
+	  </li>
 	</ul>
 	<div class="panel panel-primary">
 		<div class="panel-heading">发邮件</div>
@@ -23,7 +29,7 @@
 						<div class="form-group">
 						    <label for="inputEmail3" class="col-sm-3 control-label">邮箱</label>
 						    <div class="col-sm-9">
-						      <input type="mail" class="form-control" id="inputEmail3" placeholder="kenfo" name="mail">
+						      <input type="email" class="form-control" id="inputEmail3" placeholder="kenfo" name="mail">
 						    </div>
 						  </div>
 						<div class="form-group">
