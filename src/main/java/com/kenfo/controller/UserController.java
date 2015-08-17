@@ -33,6 +33,8 @@ public class UserController {
 				return "redirect:/leave/index";
 			}else if(type.equals("sign")){
 				return "redirect:/sign/index";
+			}else if(type.equals("mail")){
+				return "redirect:/mail/index";
 			}else{
 				return "index";
 			}

@@ -80,6 +80,7 @@ public class LeaveController {
 		//流程开始
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("owner", session.getAttribute("userName"));
+		map.put("address", "xxg3053@qq.com");
 		executionService.startProcessInstanceById(id, map);
 		
 		return "redirect:index"; 

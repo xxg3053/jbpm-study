@@ -2,7 +2,9 @@
 
 <jbpm-configuration>
 
-  <import resource="jbpm.default.cfg.xml" />
+	<!-- 
+  <import resource="jbpm.default.cfg.xml" /> -->
+  <import resource="jbpm.customer.cfg.xml" />
   <import resource="jbpm.businesscalendar.cfg.xml" />
   <import resource="jbpm.tx.hibernate.cfg.xml" />
   <import resource="jbpm.jpdl.cfg.xml" />
@@ -16,7 +18,10 @@
   -->
 
   <process-engine-context>
+  <!-- 
     <string name="spring.cfg" value="spring/applicationContext.xml" />  
+     -->
+	
   </process-engine-context>  
   
 </jbpm-configuration>
