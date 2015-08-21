@@ -22,14 +22,36 @@ $(document).ready(function(){
 			data:{},
 			success:function(data){
 				console.log(data)
-				
-				var url = "http://localhost:18083/jbpm-study/leave/start2";
+				data = data.replace(/(^\s*)|(\s*$)/g, "");
+				var url = "http://localhost:18083/jbpm-study/leave/request?taskId="+data;
 				$('#dealModal').find('iframe').attr("src",url);
-				$('#dealModal').modal();
+				$('#dealModal').modal('show');
+			}
+		})
+		
+	});
+	
+	$("#end").click(function(){
+		
+		$.ajax({
+			url:$(this).data("url"),
+			type:'GET',
+			data:{},
+			success:function(data){
+				console.log(data)
+				//data = data.replace(/(^\s*)|(\s*$)/g, "");
+				window.parent.closeModel(true);
 			}
 		})
 		
 	});
 	
 });
+
+var closeModel = function(end){
+	$('#dealModal').modal('hide');
+	if(end){
+		$('address').css("color","red");
+	}
+}
 	

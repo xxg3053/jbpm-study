@@ -1,10 +1,13 @@
 package com.kenfo.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,11 +22,15 @@ import org.jbpm.api.ProcessInstance;
 import org.jbpm.api.RepositoryService;
 import org.jbpm.api.TaskService;
 import org.jbpm.api.history.HistoryTask;
+import org.jbpm.api.model.Activity;
 import org.jbpm.api.model.ActivityCoordinates;
 import org.jbpm.api.task.Task;
+import org.jbpm.pvm.internal.model.ExecutionImpl;
+import org.jbpm.pvm.internal.model.ProcessDefinitionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -53,6 +60,17 @@ public class LeaveController {
 			//登录
 			return "redirect:/user/login";
 		}
+		return "leave/index";
+	}
+	
+	
+	@RequestMapping(value="/history",method=RequestMethod.GET)
+	public String history(HttpSession session,  Map<String,Object> model){
+		String userName = (String)session.getAttribute("userName");
+		if(StringUtils.isEmpty(userName)){
+			//登录
+			return "redirect:/user/login";
+		}
 		//流程定义
 		List<ProcessDefinition> pdList = repositoryService.createProcessDefinitionQuery().list();
 		//流程实例
@@ -67,36 +85,49 @@ public class LeaveController {
 		model.put("taskList", taskList);
 		model.put("hTaskList", hTaskList);
 		model.put("userName", userName);
-		return "leave/index";
-	}
-	
-	@RequestMapping(value="/deploy",method=RequestMethod.GET)
-	public String deploy(Map<String,Object> model){
-		//流程发布
-		repositoryService.createDeployment().addResourceFromClasspath("leave.jpdl.xml").deploy();
-		
-		return "redirect:index";
+		return "leave/all";
 	}
 	
 	@RequestMapping(value="/start",method=RequestMethod.GET)
-	public String start(String id,String userName){
-		List<Task> taskList = taskService.findPersonalTasks(userName);
+	public String start(String id,String userName,Model model){
+		//查询用户是否存在未完成的流程		
+	   List<Task> taskList = taskService.findPersonalTasks(userName);
 		if(taskList.size() == 0){
-			//流程开始
+			 //定义
+			 List<ProcessDefinition> pdList = repositoryService.createProcessDefinitionQuery().list();
+			 if(pdList.size()==0){
+				//流程发布
+				 repositoryService.createDeployment().addResourceFromClasspath("leave.jpdl.xml").deploy();
+			 }
+			
+			 ProcessDefinition pd = repositoryService.createProcessDefinitionQuery().list().get(0);
+			//如果没有则流程开始
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("owner", userName);
-			executionService.startProcessInstanceById(id, map);
+			//开始一个实例
+			List<ProcessInstance> piList = executionService.createProcessInstanceQuery().list();
+			if(piList.size()==0){
+				executionService.startProcessInstanceById(pd.getId(), map);
+			}
+			
+
 		}
-		return "leave/start";
 		
-	}
-	
-	@RequestMapping(value="/start2",method=RequestMethod.GET)
-	public String start2(HttpSession session,Map<String,Object> model){
-		String userName = (String)session.getAttribute("userName");
-		List<Task> taskList = taskService.findPersonalTasks(userName);
-		model.put("taskList", taskList);
-		return "leave/start"; 
+		RepositoryService repositoryService = processEngine.getRepositoryService();
+		ProcessDefinition definition = repositoryService.createProcessDefinitionQuery().list().get(0);
+		ProcessDefinitionImpl definitionimpl = (ProcessDefinitionImpl)definition;
+		List<? extends Activity> list = definitionimpl.getActivities();
+		for (Activity activity : list) {
+			if(activity.getType()=="task"){
+				System.out.println(activity.getName());
+			}
+		}
+		
+		List<Task> tasks = taskService.findPersonalTasks(userName);
+		model.addAttribute("taskId",tasks.get(0).getId());
+		
+		
+		return "leave/start2";
 	}
 	@RequestMapping(value="/del",method=RequestMethod.GET)
 	public String del(String deploymentId,Map<String,Object> model){
@@ -119,68 +150,77 @@ public class LeaveController {
 		
 		return "redirect:index";
 	}
-	
+	/**
+	 * 工作流中配置的form
+	 * @param id
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value="/request",method=RequestMethod.GET)
-	public String request(String id,Map<String,Object> model){
-		//申请
-		
-		return "leave/request";
+	public String request(String taskId,Map<String,Object> model){
+		//密码验证
+		model.put("taskId", taskId);
+		Task task = taskService.findPersonalTasks("aa").get(0);
+		String activityName = task.getActivityName();
+		System.out.println("activityName:"+activityName);
+		if("手机号验证".equals(activityName)){
+			return "phone/manager";
+		}else if("身份验证".equals(activityName)){
+			return "card/doBoss";
+		}else{
+			return "password/request";
+		}
 	}
 	@RequestMapping(value="/doRequest",method=RequestMethod.POST)
-	public String doRequest(String taskId,HttpSession session,
-			String owner,Integer day,String reason,Map<String,Object> model){
-		Map<String ,Object> map = Maps.newHashMap();
-		map.put("day",day);
-		map.put("reason", reason);
+	public String doRequest(String taskId,HttpSession session,Map<String,Object> model){
 		//System.out.println("taskId:"+taskId);
-		String result = "to 手机号验证";//transitions的name 
-		taskService.completeTask(taskId,result, map);
-		
-		String userName = (String)session.getAttribute("userName");
-		List<Task> taskList = taskService.findPersonalTasks(userName);
-		model.put("taskList", taskList);
-		
-		return "leave/doManager";
-	}
-	
-	@RequestMapping(value="/manager",method=RequestMethod.GET)
-	public String manager(String id,Map<String,Object> model){
-		//经理审批
-		model.put("day", taskService.getVariable(id, "day"));
-		model.put("owner", taskService.getVariable(id, "owner"));
-		model.put("reason", taskService.getVariable(id, "reason"));
-		return "leave/manager";
-	}
-	
-	@RequestMapping(value="/doManager",method=RequestMethod.POST)
-	public String doManager(String taskId,HttpSession session,Map<String,Object> model){
-		//经理审批
-		String result = "to 身份验证";
+		String result = "to 手机号验证";//transitions的name
 		taskService.completeTask(taskId,result);
 		
 		String userName = (String)session.getAttribute("userName");
 		List<Task> taskList = taskService.findPersonalTasks(userName);
 		model.put("taskList", taskList);
-		return "leave/doBoss";
-	}
-	@RequestMapping(value="/boss",method=RequestMethod.GET)
-	public String boss(String id,Map<String,Object> model){
-		//老板审批
-		model.put("day", taskService.getVariable(id, "day"));
-		model.put("owner", taskService.getVariable(id, "owner"));
-		model.put("reason", taskService.getVariable(id, "reason"));
-		return "leave/boss";
+		model.put("taskId", taskList.get(0).getId());
+		//return "leave/doManager";
+		return "phone/manager";
 	}
 	
-	@RequestMapping(value="/doBoss",method=RequestMethod.POST)
-	public String doBoss(String taskId,HttpSession session,Map<String,Object> model){
-		//老板审批
-		taskService.completeTask(taskId);
+	@RequestMapping(value="/doManager",method=RequestMethod.POST)
+	public String doManager(String taskId,String phoneNo,HttpSession session,
+			Map<String,Object> model){
+		//经理审批
+		System.out.println("taskId："+taskId);
+		System.out.println("手机号验证："+phoneNo);
+		String result = "to 身份验证";
+		taskService.completeTask(taskId,result);
 		
 		String userName = (String)session.getAttribute("userName");
 		List<Task> taskList = taskService.findPersonalTasks(userName);
-		model.put("taskList", taskList);
-		return "redirect:index";
+		model.put("taskId", taskList.get(0).getId());
+		
+		return "card/doBoss";
+	}
+	
+	/**
+	 * 工作流中配置的form
+	 * @param id
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="/boss",method=RequestMethod.GET)
+	public String boss(String taskId,Map<String,Object> model){
+		System.out.println("boss taskId:"+taskId);
+		//老板审批
+		model.put("taskId", taskId);
+		return "card/boss";
+	}
+	
+	@RequestMapping(value="/end",method=RequestMethod.GET)
+	public String end(String taskId,HttpSession session,Map<String,Object> model){
+		//老板审批
+		taskService.completeTask(taskId);
+		
+		return "leave/start2";
 	}
 	
 	@RequestMapping(value="/view",method=RequestMethod.GET)

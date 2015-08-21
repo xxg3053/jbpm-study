@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -11,30 +10,25 @@
 </head>
 <body>
  <ol class="breadcrumb">
-          <li><a href="javascript:void(0)">申请</a></li>
+          <li  class="active">密码验证</li>
 		  <li><a href="javascript:void(0)">手机号验证</a></li>
-		  <li class="active">身份证验证</li>
+		  <li><a href="javascript:void(0)">身份证验证</a></li>
 		</ol>
-	<table class="table table-striped table-bordered table-hover">
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>操作</th>
-			</tr>
-		</thead>
-		<tbody>
-			<c:forEach var="item" items="${taskList}">
-				<tr>
-					<td>${item.id}</td>
-					<td>${item.name}</td>
-					<td><a href="<%=request.getContextPath()%>/${item.formResourceName}?id=${item.id}">处理</a></td>
-				</tr>
-			</c:forEach>
-		</tbody>
-	</table>
-
-
+<form class="form-horizontal" action="<%=request.getContextPath()%>/leave/doRequest" method="POST">
+	<input type="hidden" name="taskId" value="${taskId}">
+  
+	  <div class="form-group">
+	    <label for="dayInput" class="col-sm-2 control-label">密码验证：</label>
+	    <div class="col-sm-10">
+	      <input type="password" name="password" />
+	    </div>
+	  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-success">下一步</button>
+    </div>
+  </div>
+</form>
 
 <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>

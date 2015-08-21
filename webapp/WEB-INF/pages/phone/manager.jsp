@@ -9,30 +9,23 @@
 <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 </head>
 <body>
-
+ <ol class="breadcrumb">
+          <li><a href="javascript:void(0)">申请</a></li>
+		  <li  class="active">手机号验证</li>
+		  <li><a href="javascript:void(0)">身份证验证</a></li>
+		</ol>
 		<form class="form-horizontal" action="<%=request.getContextPath()%>/leave/doManager" method="POST">
-			<input type="hidden" name="taskId" value="${param.id}">
+			<input type="hidden" name="taskId" value="${taskId}">
+		  
 		  <div class="form-group">
-		    <label for="inputEmail3" class="col-sm-2 control-label">申请人</label>
+		    <label for="dayInput" class="col-sm-2 control-label">手机号验证</label>
 		    <div class="col-sm-10">
-		     ${owner}
-		    </div>
-		  </div>
-		  <div class="form-group">
-		    <label for="dayInput" class="col-sm-2 control-label">申请天数</label>
-		    <div class="col-sm-10">
-		      ${day}
-		    </div>
-		  </div>
-		  <div class="form-group">
-		    <label for="reasonInput" class="col-sm-2 control-label">请假原因</label>
-		    <div class="col-sm-10">
-		       ${reason}
+		      <input type="text" name="phoneNo" />
 		    </div>
 		  </div>
 		  <div class="form-group">
 		    <div class="col-sm-offset-2 col-sm-10">
-		      <button type="submit" class="btn btn-success">批准</button>
+		      <button type="submit" class="btn btn-success">下一步</button>
 		    </div>
 		  </div>
 		</form>

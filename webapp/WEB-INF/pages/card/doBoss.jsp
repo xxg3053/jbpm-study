@@ -11,32 +11,18 @@
 </head>
 <body>
  <ol class="breadcrumb">
-          <li><a href="javascript:void(0)">密码验证</a></li>
-		  <li  class="active">手机号验证</li>
-		  <li><a href="javascript:void(0)">身份证验证</a></li>
+          <li><a href="javascript:void(0)">申请</a></li>
+		  <li><a href="javascript:void(0)">手机号验证</a></li>
+		  <li class="active">身份证验证</li>
 		</ol>
-	<table class="table table-striped table-bordered table-hover">
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>操作</th>
-			</tr>
-		</thead>
-		<tbody>
-			<c:forEach var="item" items="${taskList}">
-				<tr>
-					<td>${item.id}</td>
-					<td>${item.name}</td>
-					<td><a href="<%=request.getContextPath()%>/${item.formResourceName}?id=${item.id}">处理</a></td>
-				</tr>
-			</c:forEach>
-		</tbody>
-	</table>
-
+		<p>身份验证第一步</p>
+		<p>身份验证xxx</p>
+		<p>身份验证bbb</p>
+		<a href="<%=request.getContextPath()%>/leave/boss?taskId=${taskId}">复核</a>
 
 
 <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="<%=request.getContextPath()%>/resources/js/main.js"></script>
 </body>
 </html>
