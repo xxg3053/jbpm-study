@@ -15,5 +15,21 @@ $(document).ready(function(){
 		}
 	});
 	
+	$("#start").click(function(){
+		$.ajax({
+			url:$(this).data("url"),
+			type:'GET',
+			data:{},
+			success:function(data){
+				console.log(data)
+				
+				var url = "http://localhost:18083/jbpm-study/leave/start2";
+				$('#dealModal').find('iframe').attr("src",url);
+				$('#dealModal').modal();
+			}
+		})
+		
+	});
+	
 });
 	

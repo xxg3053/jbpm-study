@@ -47,16 +47,6 @@ public class UserController {
 			if(u == null){
 				identityService.createUser(userName, userName, "kenfo", email);
 			}
-			
-			if(identityService.findUserById("manager") == null){
-				//创建经理
-				identityService.createUser("manager", "manager", "kenfo", "xxg3053@qq.com");
-			}
-			if(identityService.findUserById("boss") == null){
-				//创建老板
-				identityService.createUser("boss", "boss", "kenfo", "xxg3053@qq.com");
-			}
-			
 			if(type.equals("leave")){
 				return "redirect:/leave/index";
 			}else if(type.equals("sign")){

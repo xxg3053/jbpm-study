@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.inject.internal.Maps;
 
@@ -78,14 +79,25 @@ public class LeaveController {
 	}
 	
 	@RequestMapping(value="/start",method=RequestMethod.GET)
-	public String start(String id,HttpSession session,Map<String,Object> model){
-		//流程开始
-		Map<String,Object> map = new HashMap<String,Object>();
-		map.put("owner", session.getAttribute("userName"));
-		executionService.startProcessInstanceById(id, map);
-		return "redirect:index"; 
+	public String start(String id,String userName){
+		List<Task> taskList = taskService.findPersonalTasks(userName);
+		if(taskList.size() == 0){
+			//流程开始
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("owner", userName);
+			executionService.startProcessInstanceById(id, map);
+		}
+		return "leave/start";
+		
 	}
 	
+	@RequestMapping(value="/start2",method=RequestMethod.GET)
+	public String start2(HttpSession session,Map<String,Object> model){
+		String userName = (String)session.getAttribute("userName");
+		List<Task> taskList = taskService.findPersonalTasks(userName);
+		model.put("taskList", taskList);
+		return "leave/start"; 
+	}
 	@RequestMapping(value="/del",method=RequestMethod.GET)
 	public String del(String deploymentId,Map<String,Object> model){
 		//流程删除
@@ -115,15 +127,20 @@ public class LeaveController {
 		return "leave/request";
 	}
 	@RequestMapping(value="/doRequest",method=RequestMethod.POST)
-	public String doRequest(String taskId,String owner,Integer day,String reason,Map<String,Object> model){
+	public String doRequest(String taskId,HttpSession session,
+			String owner,Integer day,String reason,Map<String,Object> model){
 		Map<String ,Object> map = Maps.newHashMap();
 		map.put("day",day);
 		map.put("reason", reason);
 		//System.out.println("taskId:"+taskId);
-		String result = "to 经理审批";//transitions的name 
+		String result = "to 手机号验证";//transitions的name 
 		taskService.completeTask(taskId,result, map);
 		
-		return "redirect:index";
+		String userName = (String)session.getAttribute("userName");
+		List<Task> taskList = taskService.findPersonalTasks(userName);
+		model.put("taskList", taskList);
+		
+		return "leave/doManager";
 	}
 	
 	@RequestMapping(value="/manager",method=RequestMethod.GET)
@@ -136,18 +153,15 @@ public class LeaveController {
 	}
 	
 	@RequestMapping(value="/doManager",method=RequestMethod.POST)
-	public String doManager(String taskId,Map<String,Object> model){
+	public String doManager(String taskId,HttpSession session,Map<String,Object> model){
 		//经理审批
-		String result = "to exclusive1";
+		String result = "to 身份验证";
 		taskService.completeTask(taskId,result);
-		return "redirect:index";
-	}
-	@RequestMapping(value="/doBack",method=RequestMethod.GET)
-	public String doBack(String taskId,Map<String,Object> model){
-		//经理驳回
-		String result = "驳回";
-		taskService.completeTask(taskId,result);
-		return "redirect:index";
+		
+		String userName = (String)session.getAttribute("userName");
+		List<Task> taskList = taskService.findPersonalTasks(userName);
+		model.put("taskList", taskList);
+		return "leave/doBoss";
 	}
 	@RequestMapping(value="/boss",method=RequestMethod.GET)
 	public String boss(String id,Map<String,Object> model){
@@ -159,9 +173,13 @@ public class LeaveController {
 	}
 	
 	@RequestMapping(value="/doBoss",method=RequestMethod.POST)
-	public String doBoss(String taskId,Map<String,Object> model){
+	public String doBoss(String taskId,HttpSession session,Map<String,Object> model){
 		//老板审批
 		taskService.completeTask(taskId);
+		
+		String userName = (String)session.getAttribute("userName");
+		List<Task> taskList = taskService.findPersonalTasks(userName);
+		model.put("taskList", taskList);
 		return "redirect:index";
 	}
 	

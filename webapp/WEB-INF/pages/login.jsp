@@ -18,12 +18,10 @@
  <div class="row">
  	<div class="col-sm-4">
  			<div class="panel panel-info">
-				<div class="panel-heading"><h4>请假系统  <small>用户登录</small></h4></div> 
+				<div class="panel-heading"><h4>修改资料三部认证系统  <small>用户登录</small></h4></div> 
 			  <div class="panel-body">
 			  	 <ul class="nav nav-tabs" role="tablist">
 				    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">普通用户</a></li>
-				    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">经理</a></li>
-				    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">老板</a></li>
 				  </ul>
 				
 				  <!-- Tab panes -->
@@ -53,111 +51,17 @@
 								
 							</form>
 				    </div>
-				    <div role="tabpanel" class="tab-pane" id="profile">
-				   		 <p></p>
-				    		<form class="form-horizontal" action="<%=request.getContextPath()%>/user/doLogin" method="POST">
-				    		<input type="hidden" value="leave" name="type"/>
-								<div class="form-group">
-								    <label for="inputEmail3" class="col-sm-3 control-label">用户名:</label>
-								    <div class="col-sm-9">
-								      <input type="text" class="form-control" id="inputEmail3" value="manager" name="userName" readonly>
-								    </div>
-								  </div>
-								   <div class="form-group">
-								    <label for="inputEmail" class="col-sm-3 control-label">邮箱:</label>
-								    <div class="col-sm-9">
-								      <input type="text" class="form-control" id="inputEmail" placeholder="xxg3053@qq.com" name="email">
-								    </div>
-								  </div>
-								  <div class="form-group">
-								    <div class="col-sm-offset-2 col-sm-10">
-								      <button type="submit" class="btn btn-primary">登录</button>
-								    </div>
-								  </div>
-								
-							</form>
-				    </div>
-				    <div role="tabpanel" class="tab-pane" id="messages">
-				   			 <p></p>
-				   				<form class="form-horizontal" action="<%=request.getContextPath()%>/user/doLogin" method="POST">
-				   				<input type="hidden" value="leave" name="type"/>
-									<div class="form-group">
-									    <label for="inputEmail3" class="col-sm-3 control-label">用户名:</label>
-									    <div class="col-sm-9">
-									      <input type="text" class="form-control" id="inputEmail3" value="boss" name="userName" readonly>
-									    </div>
-									  </div>
-									   <div class="form-group">
-									    <label for="inputEmail" class="col-sm-3 control-label">邮箱:</label>
-									    <div class="col-sm-9">
-									      <input type="text" class="form-control" id="inputEmail" placeholder="xxg3053@qq.com" name="email">
-									    </div>
-									  </div>
-									  <div class="form-group">
-									    <div class="col-sm-offset-2 col-sm-10">
-									      <button type="submit" class="btn btn-primary">登录</button>
-									    </div>
-									  </div>
-									
-								</form>
-				    </div>
 				  </div>
 				
 				</div>
 			</div>
  	
  	</div>
- 	<div class="col-sm-offset-2 col-sm-4">
- 			<!-- 其他系统 -->
-		<div class="panel panel-success">
-		  <div class="panel-heading"><h4>会签系统  <small>用户登录</small></h4></div> 
-		  <div class="panel-body">
-		  	<p>会签用户：boss,manager</p>
-		  			<form class="form-horizontal" action="<%=request.getContextPath()%>/user/doLogin" method="POST">
-		    			<input type="hidden" value="sign" name="type"/>
-						<div class="form-group">
-						    <label for="inputEmail3" class="col-sm-3 control-label">用户名:</label>
-						    <div class="col-sm-9">
-						      <input type="text" class="form-control" id="inputEmail3" placeholder="kenfo" name="userName">
-						    </div>
-						  </div>
-						  
-						  <div class="form-group">
-						    <div class="col-sm-offset-2 col-sm-10">
-						      <button type="submit" class="btn btn-primary">登录</button>
-						    </div>
-						  </div>
-						
-					</form>
-		  </div>
-	  </div>
- 	</div>
+ 	
+ 	
  </div>
   <div class="row">
- 	<div class="col-sm-4">
- 			<!-- 邮件系统 -->
-		<div class="panel panel-success">
-		  <div class="panel-heading"><h4>邮件系统  <small>用户登录</small></h4></div> 
-		  <div class="panel-body">
-		  			<form class="form-horizontal" action="<%=request.getContextPath()%>/user/doLogin" method="POST">
-		    			<input type="hidden" value="mail" name="type"/>
-						<div class="form-group">
-						    <label for="inputEmail3" class="col-sm-3 control-label">用户名:</label>
-						    <div class="col-sm-9">
-						      <input type="text" class="form-control" id="inputEmail3" placeholder="kenfo" name="userName">
-						    </div>
-						  </div>
-						  
-						  <div class="form-group">
-						    <div class="col-sm-offset-2 col-sm-10">
-						      <button type="submit" class="btn btn-primary">登录</button>
-						    </div>
-						  </div>
-						
-					</form>
-		  </div>
-	  </div>
- 	</div>
+ 	
  </div>
 </div>
 <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>

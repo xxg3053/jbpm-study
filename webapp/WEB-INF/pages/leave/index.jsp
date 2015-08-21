@@ -6,7 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>请假管理界面</title>
+<title>修改资料三步认证管理界面</title>
 <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 
 <script src="<%=request.getContextPath()%>/resources/js/jquery-1.11.3.min.js"></script>
@@ -28,7 +28,31 @@
 	  </li>
 	</ul>
 	
-		
+			
+		<!-- 待办任务
+	<div class="panel panel-danger">
+		<div class="panel-heading"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> 待办任务</div>
+	  <div class="panel-body">
+		<table class="table table-striped table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>Name</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach var="item" items="${taskList}">
+					<tr>
+						<td>${item.id}</td>
+						<td>${item.name}</td>
+						<td><a data-url="<%=request.getContextPath()%>/${item.formResourceName}?id=${item.id}" href="#" data-toggle="modal" data-target="#dealModal">处理</a></td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+	</div>
+	</div> -->	
 	
 	<!-- 流程定义 -->
 	<div class="panel panel-primary">
@@ -50,7 +74,7 @@
 						<td>${item.name}</td>
 						<td>${item.version}</td>
 						<td><a href="#" class="delete" data-url="<%=request.getContextPath()%>/leave/del?deploymentId=${item.deploymentId}">删除</a>
-						<a href="<%=request.getContextPath()%>/leave/start?id=${item.id}">发起</a>
+						<a data-url="<%=request.getContextPath()%>/leave/start?id=${item.id}&userName=${userName}" href="#" id="start">发起</a>
 						</td>
 					</tr>
 				</c:forEach>
@@ -86,31 +110,7 @@
 		</table>
 	</div>
 	</div>
-	
-		<!-- 待办任务 -->	
-	<div class="panel panel-danger">
-		<div class="panel-heading"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> 待办任务</div>
-	  <div class="panel-body">
-		<table class="table table-striped table-bordered table-hover">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th>Name</th>
-					<th>操作</th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach var="item" items="${taskList}">
-					<tr>
-						<td>${item.id}</td>
-						<td>${item.name}</td>
-						<td><a href="<%=request.getContextPath()%>/${item.formResourceName}?id=${item.id}">处理</a></td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-	</div>
-	</div>
+
 
 
 		<!-- 历史记录 -->	
@@ -163,7 +163,23 @@
     </div>
   </div>
 </div>
-
+<!-- 处理流程 -->
+<div class="modal fade" id="dealModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">修改资料</h4>
+      </div>
+      <div class="modal-body">
+      <!--  -->
+      <iframe name="dealIframe" frameborder="0" height="200" width="100%" src="">
+      
+      </iframe>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 </body>
