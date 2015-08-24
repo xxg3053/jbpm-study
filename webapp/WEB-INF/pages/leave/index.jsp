@@ -16,6 +16,7 @@
     <ul class="nav nav-tabs" Style="margin-bottom:10px;margin-top:10px;">
 	  <li role="presentation" class="active"><a href="<%=request.getContextPath()%>/leave/index"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> 流程管理面板</a></li>
 	 <li role="presentation"><a href="<%=request.getContextPath()%>/leave/history"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 流程记录</a></li>
+	 <li role="presentation"><a href="<%=request.getContextPath()%>/leave/setting"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 设置流程</a></li>
 	 
 	   <li role="presentation" class="dropdown">
 	    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -25,20 +26,34 @@
 	      <li role="presentation"><a href="<%=request.getContextPath()%>/user/logout">退出</a></li>
 	    </ul>
 	  </li>
+	   <li role="presentation"><a href="#">当前流程：${flowName}</a></li>
 	</ul>
+	<form class="form-horizontal" id="indexForm">
+  <div class="form-group">
+    <label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="inputEmail3" placeholder="Email" value="kenfo">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputPassword3" class="col-sm-2 control-label">邮箱</label>
+    <div class="col-sm-10">
+      <input type="email" class="form-control" id="inputPassword3" placeholder="Password"  value="xxg3053@qq.com">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputPassword3" class="col-sm-2 control-label">地址</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="inputPassword3" placeholder="Password" value="深南大道">
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <a class="btn btn-primary" data-url="<%=request.getContextPath()%>/leave/start?userName=${userName}&flowName=${flowName}" href="#" id="start">修改</a>
 	
-	<address>
-	  <strong>Twitter, Inc.</strong><br>
-	  795 Folsom Ave, Suite 600<br>
-	  San Francisco, CA 94107<br>
-	  <abbr title="Phone">P:</abbr> (123) 456-7890
-	</address>
-	
-	<address>
-	  <strong>Full Name</strong><br>
-	  <a href="mailto:#">first.last@example.com</a>
-	</address>
-	<a class="btn btn-primary" data-url="<%=request.getContextPath()%>/leave/start?userName=${userName}" href="#" id="start">修改</a>
+    </div>
+  </div>
+</form>
 						
 
 	

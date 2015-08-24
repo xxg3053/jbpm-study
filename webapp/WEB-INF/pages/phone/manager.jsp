@@ -9,12 +9,8 @@
 <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 </head>
 <body>
- <ol class="breadcrumb">
-          <li><a href="javascript:void(0)">申请</a></li>
-		  <li  class="active">手机号验证</li>
-		  <li><a href="javascript:void(0)">身份证验证</a></li>
-		</ol>
-		<form class="form-horizontal" action="<%=request.getContextPath()%>/leave/doManager" method="POST">
+ <ol class="breadcrumb" id="nav_activities"></ol>
+		<form class="form-horizontal" id="photoForm">
 			<input type="hidden" name="taskId" value="${taskId}">
 		  
 		  <div class="form-group">
@@ -25,11 +21,12 @@
 		  </div>
 		  <div class="form-group">
 		    <div class="col-sm-offset-2 col-sm-10">
-		      <button type="submit" class="btn btn-success">下一步</button>
+		      <button type="button" class="btn btn-success" id="photoButton">下一步</button>
 		    </div>
 		  </div>
 		</form>
 <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="<%=request.getContextPath()%>/resources/js/activity.js"></script>
 </body>
 </html>

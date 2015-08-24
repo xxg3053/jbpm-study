@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	$("#indexForm input,textarea").attr("readOnly",true);
 	$(".delete").click(function(){
 		var durl = $(this).data("url");
 		if(durl){
@@ -21,26 +22,9 @@ $(document).ready(function(){
 			type:'GET',
 			data:{},
 			success:function(data){
-				console.log(data)
-				data = data.replace(/(^\s*)|(\s*$)/g, "");
-				var url = "http://localhost:18083/jbpm-study/leave/request?taskId="+data;
+				var url = "http://localhost:18083/jbpm-study/leave/request?taskId="+data.taskId;
 				$('#dealModal').find('iframe').attr("src",url);
 				$('#dealModal').modal('show');
-			}
-		})
-		
-	});
-	
-	$("#end").click(function(){
-		
-		$.ajax({
-			url:$(this).data("url"),
-			type:'GET',
-			data:{},
-			success:function(data){
-				console.log(data)
-				//data = data.replace(/(^\s*)|(\s*$)/g, "");
-				window.parent.closeModel(true);
 			}
 		})
 		
@@ -51,7 +35,7 @@ $(document).ready(function(){
 var closeModel = function(end){
 	$('#dealModal').modal('hide');
 	if(end){
-		$('address').css("color","red");
+		$("#indexForm input,textarea").attr("readOnly",false);
 	}
 }
 	

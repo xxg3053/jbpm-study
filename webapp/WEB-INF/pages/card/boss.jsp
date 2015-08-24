@@ -9,19 +9,16 @@
 <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 </head>
 <body>
- <ol class="breadcrumb">
-          <li><a href="javascript:void(0)">申请</a></li>
-		  <li><a href="javascript:void(0)">手机号验证</a></li>
-		  <li class="active">身份证验证</li>
+ <ol class="breadcrumb" id="nav_activities"></li>
 		</ol>
 		<p>身份验证第二步</p>
 		<p>身份证照片</p>
 		
-	<button data-url="<%=request.getContextPath()%>/leave/end?taskId=${taskId}" type="submit" class="btn btn-success" id="end">认证完成</button>
+	<button data-url="<%=request.getContextPath()%>/leave/end/${taskId}" type="submit" class="btn btn-success" id="end">认证完成</button>
 		    
 </div>
 <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script src="<%=request.getContextPath()%>/resources/js/main.js"></script>
+<script src="<%=request.getContextPath()%>/resources/js/activity.js"></script>
 </body>
 </html>

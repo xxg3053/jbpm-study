@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 </head>
 <body>
- <ol class="breadcrumb">
+ <ol class="breadcrumb" id="nav_activities">
          <li class="active">申请</li>
 		  <li><a href="javascript:void(0)">手机号验证</a></li>
 		  <li><a href="javascript:void(0)">身份证验证</a></li>

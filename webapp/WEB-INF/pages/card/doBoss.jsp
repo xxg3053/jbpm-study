@@ -10,11 +10,7 @@
 <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 </head>
 <body>
- <ol class="breadcrumb">
-          <li><a href="javascript:void(0)">申请</a></li>
-		  <li><a href="javascript:void(0)">手机号验证</a></li>
-		  <li class="active">身份证验证</li>
-		</ol>
+ 	  <ol class="breadcrumb" id="nav_activities"></ol>
 		<p>身份验证第一步</p>
 		<p>身份验证xxx</p>
 		<p>身份验证bbb</p>
@@ -23,6 +19,6 @@
 
 <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script src="<%=request.getContextPath()%>/resources/js/main.js"></script>
+<script src="<%=request.getContextPath()%>/resources/js/activity.js"></script>
 </body>
 </html>

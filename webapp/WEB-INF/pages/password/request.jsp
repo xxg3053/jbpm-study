@@ -9,11 +9,7 @@
 <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" />
 </head>
 <body>
- <ol class="breadcrumb">
-          <li  class="active">密码验证</li>
-		  <li><a href="javascript:void(0)">手机号验证</a></li>
-		  <li><a href="javascript:void(0)">身份证验证</a></li>
-		</ol>
+ <ol class="breadcrumb" id="nav_activities"></ol>
 <form class="form-horizontal" action="<%=request.getContextPath()%>/leave/doRequest" method="POST">
 	<input type="hidden" name="taskId" value="${taskId}">
   
@@ -32,5 +28,6 @@
 
 <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="<%=request.getContextPath()%>/resources/js/activity.js"></script>
 </body>
 </html>

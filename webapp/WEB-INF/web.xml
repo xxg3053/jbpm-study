@@ -10,6 +10,18 @@
 		<param-value>/WEB-INF/classes/spring/applicationContext*.xml</param-value>
   </context-param>
   
+  <!-- Spring的OpenSessionInView实现
+<filter>
+    <filter-name>openSessionInViewFilter</filter-name>
+    <filter-class>
+        org.springframework.orm.hibernate3.support.OpenSessionInViewFilter
+    </filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>openSessionInViewFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping> -->
+  
   <listener>
 		<listener-class>
 			org.springframework.web.context.ContextLoaderListener
