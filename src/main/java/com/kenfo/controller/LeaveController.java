@@ -25,6 +25,7 @@ import org.jbpm.pvm.internal.model.ExecutionImpl;
 import org.jbpm.pvm.internal.model.ProcessDefinitionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.inject.internal.Lists;
 import com.google.inject.internal.Maps;
+import com.kenfo.service.JBPMService;
 
 @Controller
 @RequestMapping("/leave")
@@ -42,15 +44,15 @@ public class LeaveController {
 
 	private static Logger log = LoggerFactory.getLogger(LeaveController.class);
 	
-	//流程引擎
-	ProcessEngine processEngine = Configuration.getProcessEngine();
-	//流程仓库
-	RepositoryService repositoryService = processEngine.getRepositoryService();
-
-	ExecutionService executionService = processEngine.getExecutionService();
-	TaskService taskService = processEngine.getTaskService();
-	HistoryService historyService = processEngine.getHistoryService();
-	IdentityService identityService = processEngine.getIdentityService();
+	private JBPMService jBPMService;
+	
+	public JBPMService getjBPMService() {
+		return jBPMService;
+	}
+	@Autowired
+	public void setjBPMService(JBPMService jBPMService) {
+		this.jBPMService = jBPMService;
+	}
 	
 	@RequestMapping(value="/index",method=RequestMethod.GET)
 	public String index(HttpSession session,  Map<String,Object> model){
@@ -73,7 +75,10 @@ public class LeaveController {
 	@RequestMapping(value="/doSetting",method=RequestMethod.POST)
 	public String doSetting(String flowName,HttpSession session,  Map<String,Object> model){
 		session.setAttribute("flowName", flowName);
-		
+		List<ProcessDefinition> pdList = jBPMService.getAllPd();
+		for(ProcessDefinition df:pdList){
+			jBPMService.deleteDeploymentCascade(df.getDeploymentId());
+		}
 		return "redirect:index";
 	}
 	
@@ -85,13 +90,13 @@ public class LeaveController {
 			return "redirect:/user/login";
 		}
 		//流程定义
-		List<ProcessDefinition> pdList = repositoryService.createProcessDefinitionQuery().list();
+		List<ProcessDefinition> pdList = jBPMService.getAllPd();
 		//流程实例
-		List<ProcessInstance> piList = executionService.createProcessInstanceQuery().list();
+		List<ProcessInstance> piList = jBPMService.getAllPI();
 		//
-		List<Task> taskList = taskService.findPersonalTasks(userName);
+		List<Task> taskList = jBPMService.getTaskListByPerson(userName);
 		
-		List<HistoryTask> hTaskList = historyService.createHistoryTaskQuery().assignee(userName).list();
+		List<HistoryTask> hTaskList = jBPMService.getHistoryTaskListByPerson(userName);
 		
 		model.put("processDef", pdList);
 		model.put("piList", piList);
@@ -107,26 +112,26 @@ public class LeaveController {
 			flowName = "leave";
 		}
 		//查询用户是否存在未完成的流程		
-	   List<Task> taskList = taskService.findPersonalTasks(userName);
+	   List<Task> taskList = jBPMService.getTaskListByPerson(userName);
 		if(taskList.size() == 0){
 			 //定义
-			 List<ProcessDefinition> pdList = repositoryService.createProcessDefinitionQuery().list();
+			 List<ProcessDefinition> pdList = jBPMService.getAllPd();
 			 if(pdList.size()==0){
 				//流程发布
-				 repositoryService.createDeployment().addResourceFromClasspath(flowName+".jpdl.xml").deploy();
+				 jBPMService.deployNew(flowName+".jpdl.xml");
 			 }
 			
-			 ProcessDefinition pd = repositoryService.createProcessDefinitionQuery().list().get(0);
+			 ProcessDefinition pd = jBPMService.getAllPd().get(0);
 			//如果没有则流程开始
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("owner", userName);
 			//开始一个实例
-			List<ProcessInstance> piList = executionService.createProcessInstanceQuery().list();
+			List<ProcessInstance> piList = jBPMService.getAllPI();
 			if(piList.size()==0){
-				executionService.startProcessInstanceById(pd.getId(), map);
+				jBPMService.startPI(pd.getId(), map);
 			}
 		}
-		List<Task> tasks = taskService.findPersonalTasks(userName);
+		List<Task> tasks = jBPMService.getTaskListByPerson(userName);
 		
 		Map<String,Object> result = Maps.newHashMap();
 		result.put("taskId", tasks.get(0).getId());
@@ -135,24 +140,9 @@ public class LeaveController {
 	/*******流程导航**************************/
 	@RequestMapping(value="/tasks/{userName}",method=RequestMethod.GET)
 	public @ResponseBody Map<String,Object> getActivitiesJson(@PathVariable String userName){
-		RepositoryService repositoryService = processEngine.getRepositoryService();
-		ProcessDefinition definition = repositoryService.createProcessDefinitionQuery().list().get(0);
-		ProcessDefinitionImpl definitionimpl = (ProcessDefinitionImpl)definition;
-		List<? extends Activity> list = definitionimpl.getActivities();
-		Map<String,Object> result = Maps.newHashMap();
-		List<String> as = Lists.newArrayList();
-		for (Activity activity : list) {
-			if(activity.getType()=="task"){
-				as.add(activity.getName());
-			}
-		}
-		Task task = taskService.findPersonalTasks(userName).get(0);
-		String activityName = task.getActivityName();
 		
-		result.put("active", activityName);
-		result.put("activities", as);
 		
-		return  result;
+		return  jBPMService.getAssigneeActivities(userName);
 	}
 	
 	
@@ -162,7 +152,7 @@ public class LeaveController {
 		///查询出当前流程的状态
 		//根据状态跳转到不同界面
 		model.put("taskId", taskId);
-		Task task = taskService.findPersonalTasks("aa").get(0);
+		Task task = jBPMService.getTaskListByPerson("aa").get(0);
 		String activityName = task.getActivityName();
 		System.out.println("activityName:"+activityName);
 		if("手机号验证".equals(activityName)){
@@ -179,9 +169,9 @@ public class LeaveController {
 	public String doRequest(String taskId,HttpSession session,Map<String,Object> model){
 		//System.out.println("taskId:"+taskId);
 		String result = "to 手机号验证";//transitions的name
-		taskService.completeTask(taskId,result);
+		jBPMService.addReply(taskId,result);
 		String userName = (String)session.getAttribute("userName");
-		List<Task> taskList = taskService.findPersonalTasks(userName);
+		List<Task> taskList = jBPMService.getTaskListByPerson(userName);
 		model.put("taskList", taskList);
 		model.put("taskId", taskList.get(0).getId());
 		return "phone/manager";
@@ -200,10 +190,10 @@ public class LeaveController {
 		Map<String,Object> result = Maps.newHashMap();
 		if("leave".equals(flowName)){
 			//身份验证
-			taskService.completeTask(taskId,"to 身份验证");
+			jBPMService.addReply(taskId, "to 身份验证");
 			
 			String userName = (String)session.getAttribute("userName");
-			List<Task> taskList = taskService.findPersonalTasks(userName);
+			List<Task> taskList = jBPMService.getTaskListByPerson(userName);
 			taskId =  taskList.get(0).getId();
 			model.put("taskId",taskId);
 			
@@ -213,7 +203,7 @@ public class LeaveController {
 			
 			return result;
 		}else if("two".equals(flowName)){
-			taskService.completeTask(taskId,"to end1");
+			jBPMService.addReply(taskId, "to end1");
 			result.put("isEnd", "true");
 			result.put("url", "");
 			return result;
@@ -242,7 +232,7 @@ public class LeaveController {
 	@RequestMapping(value="/end/{taskId}",method=RequestMethod.GET)
 	public @ResponseBody String end(@PathVariable String taskId,Map<String,Object> model){
 		//身份认证
-		taskService.completeTask(taskId);
+		jBPMService.addReply(taskId);
 		//判断流程中这一步是不是最后一步
 		
 		return "end";
@@ -251,14 +241,10 @@ public class LeaveController {
 	@RequestMapping(value="/view",method=RequestMethod.GET)
 	public String view(String id,Map<String,Object> model){
 		
-		ProcessInstance processInstance = executionService
-				.findProcessInstanceById(id); // 根据ID获取流程实例
-		Set<String> activityNames = processInstance
-				.findActiveActivityNames(); // 获取实例执行到的当前节点的名称
+		ProcessInstance processInstance = jBPMService.getPIById(id);
+		Set<String> activityNames = processInstance.findActiveActivityNames(); // 获取实例执行到的当前节点的名称
 		
-		ActivityCoordinates ac = repositoryService.getActivityCoordinates(
-				processInstance.getProcessDefinitionId(), activityNames
-						.iterator().next());
+		ActivityCoordinates ac = jBPMService.getActivityCoordinates(processInstance.getProcessDefinitionId(), activityNames);
 		model.put("ac", ac);
 		
 		return "leave/view";
@@ -270,7 +256,7 @@ public class LeaveController {
 		//流程删除
 		log.debug("删除流程deploymentId:"+deploymentId);
 		if(StringUtils.isNotEmpty(deploymentId)){ 
-			repositoryService.deleteDeploymentCascade(deploymentId);
+			jBPMService.deleteDeploymentCascade(deploymentId);
 		}
 		
 		return "redirect:index";
@@ -281,7 +267,7 @@ public class LeaveController {
 		//流程删除
 		log.debug("删除流程实例id:"+id);
 		if(StringUtils.isNotEmpty(id)){ 
-			executionService.deleteProcessInstanceCascade(id);
+			jBPMService.deleteProcessInstanceCascade(id);
 		}
 		
 		return "redirect:index";

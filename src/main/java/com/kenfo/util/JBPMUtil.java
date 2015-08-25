@@ -3,14 +3,17 @@ package com.kenfo.util;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
+
 import org.jbpm.api.ExecutionService;
 import org.jbpm.api.HistoryService;
+import org.jbpm.api.IdentityService;
 import org.jbpm.api.ManagementService;
 import org.jbpm.api.ProcessDefinition;
 import org.jbpm.api.ProcessEngine;
 import org.jbpm.api.ProcessInstance;
 import org.jbpm.api.RepositoryService;
 import org.jbpm.api.TaskService;
+import org.jbpm.api.history.HistoryTask;
 import org.jbpm.api.task.Task;
 
 /**
@@ -27,6 +30,7 @@ public class JBPMUtil {
 	private TaskService taskService = null;
 	private HistoryService historyService = null;
 	private ManagementService managementService = null;
+	private IdentityService identityService = null;
 	
 	public JBPMUtil(){
 		
@@ -38,6 +42,7 @@ public class JBPMUtil {
 		taskService = processEngine.getTaskService();
 		historyService = processEngine.getHistoryService();
 		managementService = processEngine.getManagementService();
+		identityService = processEngine.getIdentityService();
 	}
 
 	
@@ -54,6 +59,7 @@ public class JBPMUtil {
 		taskService = processEngine.getTaskService();
 		historyService = processEngine.getHistoryService();
 		managementService = processEngine.getManagementService();
+		identityService = processEngine.getIdentityService();
 	}
 
 	public RepositoryService getRepositoryService() {
@@ -208,6 +214,10 @@ public class JBPMUtil {
 	 */
 	public List<Task> findPersonalTasks(String userName){
 		return taskService.findPersonalTasks(userName);
+	}
+	
+	public List<HistoryTask> findPersonalHistoryTasks(String userName){
+		return historyService.createHistoryTaskQuery().assignee(userName).list();
 	}
 	
 	/**
