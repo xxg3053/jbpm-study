@@ -14,7 +14,6 @@ import org.jbpm.api.model.Activity;
 import org.jbpm.api.model.ActivityCoordinates;
 import org.jbpm.api.task.Task;
 import org.jbpm.pvm.internal.model.ProcessDefinitionImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.inject.internal.Lists;

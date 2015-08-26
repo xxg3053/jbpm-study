@@ -69,7 +69,7 @@
       </div>
       <div class="modal-body">
       <!--  -->
-      <iframe name="dealIframe" frameborder="0" height="200" width="100%" src="">
+      <iframe name="dealIframe" frameborder="0" scrolling="no" height="200" width="100%" src="">
       
       </iframe>
       </div>

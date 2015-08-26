@@ -37,9 +37,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.inject.internal.Lists;
 import com.google.inject.internal.Maps;
 import com.kenfo.service.JBPMService;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 @Controller
 @RequestMapping("/leave")
+@Api(basePath = "/",value = "/leave", description = "请假流程", position = 3)
 public class LeaveController {
 
 	private static Logger log = LoggerFactory.getLogger(LeaveController.class);
@@ -105,9 +109,16 @@ public class LeaveController {
 		model.put("userName", userName);
 		return "leave/all";
 	}
+	
 	/*******流程启动**************************/
+	@ResponseBody
 	@RequestMapping(value="/start",method=RequestMethod.GET)
-	public @ResponseBody Map<String,Object> start(String userName,String flowName,Model model){
+	@ApiOperation(value = "开始一个流程", httpMethod = "GET", response = Map.class, 
+		notes = "根据用户和流程名称开启流程，目前流程有两种：三成认证(leave)和两次认证(two)")
+	public Map<String,Object> start(
+			@ApiParam(required = true, name = "userName", value = "用户名") String userName,
+			@ApiParam(required = true, name = "flowName", value = "流程名称") String flowName,
+			Model model){
 		if(StringUtils.isEmpty(flowName)){
 			flowName = "leave";
 		}
@@ -134,12 +145,22 @@ public class LeaveController {
 		List<Task> tasks = jBPMService.getTaskListByPerson(userName);
 		
 		Map<String,Object> result = Maps.newHashMap();
-		result.put("taskId", tasks.get(0).getId());
+		Task ct = tasks.get(0);
+		//System.out.println(ct);
+		
+		result.put("taskId", ct.getId());
+		result.put("activityName", ct.getActivityName());
+		result.put("description", ct.getDescription());
+		result.put("formResourceName", ct.getFormResourceName());
+		
 		return result;
 	}
 	/*******流程导航**************************/
+	@ResponseBody
 	@RequestMapping(value="/tasks/{userName}",method=RequestMethod.GET)
-	public @ResponseBody Map<String,Object> getActivitiesJson(@PathVariable String userName){
+	@ApiOperation(value = "获取流程导航", httpMethod = "GET", response = Map.class, notes = "获取流程导航")
+	public Map<String,Object> getActivitiesJson(
+			@ApiParam(required = true, name = "userName", value = "用户名") @PathVariable String userName){
 		
 		
 		return  jBPMService.getAssigneeActivities(userName);
@@ -153,6 +174,8 @@ public class LeaveController {
 		//根据状态跳转到不同界面
 		model.put("taskId", taskId);
 		Task task = jBPMService.getTaskListByPerson("aa").get(0);
+		
+		
 		String activityName = task.getActivityName();
 		System.out.println("activityName:"+activityName);
 		if("手机号验证".equals(activityName)){
@@ -177,9 +200,11 @@ public class LeaveController {
 		return "phone/manager";
 	}
 	
+	
 	/*******身份验证流程开始**************************/
+	@ResponseBody
 	@RequestMapping(value="/doManager",method=RequestMethod.GET)
-	public @ResponseBody Map<String,Object> doManager(String taskId,String phoneNo,
+	public Map<String,Object> doManager(String taskId,String phoneNo,
 			HttpSession session,
 			Map<String,Object> model){
 		//
@@ -266,7 +291,7 @@ public class LeaveController {
 	public String delpi(String id,Map<String,Object> model){
 		//流程删除
 		log.debug("删除流程实例id:"+id);
-		if(StringUtils.isNotEmpty(id)){ 
+		if(StringUtils.isNotEmpty(id)){
 			jBPMService.deleteProcessInstanceCascade(id);
 		}
 		

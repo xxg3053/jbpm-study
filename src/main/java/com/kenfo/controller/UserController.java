@@ -18,8 +18,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.wordnik.swagger.annotations.Api;
+
 @Controller
 @RequestMapping("/user")
+@Api(basePath = "/",value = "user", description = "用户管理", position = 2)
 public class UserController {
 
 		//流程引擎

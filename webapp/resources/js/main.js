@@ -15,8 +15,7 @@ $(document).ready(function(){
 
 		}
 	});
-	
-	$("#start").click(function(){
+	$("#start").bind('click',function(){
 		$.ajax({
 			url:$(this).data("url"),
 			type:'GET',
@@ -27,15 +26,18 @@ $(document).ready(function(){
 				$('#dealModal').modal('show');
 			}
 		})
-		
-	});
+   });
+	
 	
 });
 
+////流程结束之后的回调函数
 var closeModel = function(end){
 	$('#dealModal').modal('hide');
 	if(end){
 		$("#indexForm input,textarea").attr("readOnly",false);
+		$("#start").attr("href","#");
+		$("#start").unbind("click");
 	}
 }
 	
