@@ -2,6 +2,7 @@ package com.kenfo.common;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -22,6 +23,7 @@ import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
 @Configuration
 @EnableWebMvc
 @EnableSwagger
+@ComponentScan("com.kenfo.controller")
 // Loads the spring beans required by the framework
 public class MySwaggerConfig
 {
@@ -45,15 +47,16 @@ public class MySwaggerConfig
     @Bean
     public SwaggerSpringMvcPlugin customImplementation()
     {
-        return new SwaggerSpringMvcPlugin(this.springSwaggerConfig).apiInfo(apiInfo()).includePatterns(
-                ".*?");
+        return new SwaggerSpringMvcPlugin(this.springSwaggerConfig)
+        .apiInfo(apiInfo())
+        .includePatterns(".*?");
     }
 
     private ApiInfo apiInfo()
     {
         ApiInfo apiInfo = new ApiInfo(
                 "工作流系统API", //My Apps API Title
-                "初步实现修改资料两个认证方式的切换",//My Apps API Description
+                "初步实现两种认证方式的切换<br/>基本步骤：1.用户登录；2.设置流程；3.获取流程导航；4.开启一个流程；5.完成流程。",//My Apps API Description
                 "产品三部",// My Apps API terms of service
                 "xxg3053@qq.com", //My Apps API Contact Email
                 "Apache 2.0",//My Apps API Licence Type

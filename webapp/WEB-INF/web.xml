@@ -9,24 +9,12 @@
  		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/classes/spring/applicationContext*.xml</param-value>
   </context-param>
-  
-  <!-- Spring的OpenSessionInView实现
-<filter>
-    <filter-name>openSessionInViewFilter</filter-name>
-    <filter-class>
-        org.springframework.orm.hibernate3.support.OpenSessionInViewFilter
-    </filter-class>
-</filter>
-<filter-mapping>
-    <filter-name>openSessionInViewFilter</filter-name>
-    <url-pattern>/</url-pattern>
-</filter-mapping> 
-  
+    
   <listener>
 		<listener-class>
 			org.springframework.web.context.ContextLoaderListener
 		</listener-class>
-  </listener>-->
+  </listener>
 
   <!-- DispatcherServlet, Spring MVC的核心 -->
   <servlet>
@@ -45,4 +33,24 @@
 	    <!-- mvc-dispatcher拦截所有的请求-->
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
+	
+	<!-- 控制Session的开关
+  <filter>
+  	<filter-name>openSession</filter-name>
+  	<filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
+  </filter>
+  <filter-mapping>
+  	<filter-name>openSession</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping> -->   
+  
+  <filter>
+  	<filter-name>ApiOriginFilter</filter-name>
+  	<filter-class>com.kenfo.filter.ApiOriginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+  	<filter-name>ApiOriginFilter</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+
 </web-app>

@@ -87,14 +87,30 @@ public class JBPMServiceImpl implements JBPMService {
 
 
 	public List<ProcessDefinition> getAllPd() {
-		return jBPMUtil.getAllPdList();
+		return jBPMUtil.getAllProcessDefinitionList();
+	}
+
+	@Override
+	public List<ProcessDefinition> getPdByKey(String key) {
+		// TODO Auto-generated method stub
+		return jBPMUtil.getProcessDefinitionByKey(key);
+	}
+	@Override
+	public ProcessDefinition getPdById(String id) {
+		// TODO Auto-generated method stub
+		return jBPMUtil.getProcessDefinitionById(id);
+	}
+	@Override
+	public List<ProcessInstance> getAllPI() {
+		// TODO Auto-generated method stub
+		return jBPMUtil.getAllProcessInstanceList();
 	}
 
 
 	@Override
-	public List<ProcessInstance> getAllPI() {
+	public List<ProcessInstance> getPiByKey(String key) {
 		// TODO Auto-generated method stub
-		return jBPMUtil.getAllPiList();
+		return jBPMUtil.getProcessInstanceByKey(key);
 	}
 
 
@@ -104,7 +120,7 @@ public class JBPMServiceImpl implements JBPMService {
 		return jBPMUtil.getExecutionService().findProcessInstanceById(id);
 	}
 
-
+   
 	@Override
 	public ActivityCoordinates getActivityCoordinates(
 			String processDefinitionId, Set<String> activityNames) {
@@ -127,28 +143,66 @@ public class JBPMServiceImpl implements JBPMService {
 
 
 	@Override
-	public Map<String, Object> getAssigneeActivities(String assignee) {
-		RepositoryService repositoryService = jBPMUtil.getRepositoryService();
-		ProcessDefinition definition = repositoryService.createProcessDefinitionQuery().list().get(0);
+	public Map<String, Object> getAssigneeActivities(String assignee,String key) {
+		ProcessDefinition definition = jBPMUtil.getProcessDefinitionByKey(key).get(0);
 		ProcessDefinitionImpl definitionimpl = (ProcessDefinitionImpl)definition;
 		List<? extends Activity> list = definitionimpl.getActivities();
 		Map<String,Object> result = Maps.newHashMap();
-		List<String> as = Lists.newArrayList();
+		List<Map<String,Object>> as = Lists.newArrayList();
 		for (Activity activity : list) {
 			if(activity.getType()=="task"){
-				as.add(activity.getName());
+				
+				//List<Task> tasks = jBPMUtil.findPersonalTasks(assignee);
+				Map<String,Object> m = Maps.newHashMap();
+				m.put("activityName", activity.getName());
+				m.put("formResourceName", "");
+//				for(Task t:tasks){
+//					System.out.println(t.getId());
+//					System.out.println(activity.);
+//					if(t.getActivityName().equals(activity.getName())){
+//						m.put("formResourceName", t.getFormResourceName());
+//					}
+//				}
+				as.add(m);
+				
 			}
 		}
-		Task task = jBPMUtil.findPersonalTasks(assignee).get(0);
-		String activityName = task.getActivityName();
-		
-		result.put("active", activityName); //当前活动节点
-		result.put("activities", as); //该用户所有节点
-		
+		List<Task> tasks = jBPMUtil.findPersonalTasks(assignee);
+		if(tasks.size() != 0){
+			String activityName = tasks.get(0).getActivityName();
+			result.put("status", 200);
+			result.put("messasge", "流程导航查询成功");
+			result.put("active", activityName); //当前活动节点
+			result.put("activities", as); //该用户所有节点
+		}else{
+			result.put("status", 200);
+			result.put("messasge", "当前没有可用流程");
+			result.put("active", ""); //当前活动节点
+			result.put("activities", ""); //该用户所有节点
+		}
 		return result;
+	}
+
+
+	@Override
+	public Task getTask(String taskId) {
+		// TODO Auto-generated method stub
+		return jBPMUtil.getTask(taskId);
 	}
   
 	
-	
+	public Activity getActivity(String activityName,String key){
+		ProcessDefinition definition = jBPMUtil.getProcessDefinitionByKey(key).get(0);
+		ProcessDefinitionImpl definitionimpl = (ProcessDefinitionImpl)definition;
+		List<? extends Activity> list = definitionimpl.getActivities();
+		for(Activity a:list){
+			if(activityName.equals(a.getName())){
+				return a;
+			}
+		}
+		return null;
+	}
+
+
 	
 }

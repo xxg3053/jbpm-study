@@ -16,7 +16,7 @@
 <div class="container">
     <ul class="nav nav-tabs" Style="margin-bottom:10px;margin-top:10px;">
 	  <li role="presentation"><a href="<%=request.getContextPath()%>/leave/index"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> 流程管理面板</a></li>
-	  <li role="presentation"  class="active"><a href="<%=request.getContextPath()%>/leave/deploy"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 发布</a></li>
+	  <li role="presentation"  class="active"><a href="<%=request.getContextPath()%>/leave/history"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 流程记录</a></li>
 	 
 	   <li role="presentation" class="dropdown">
 	    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -29,7 +29,7 @@
 	</ul>
 	
 			
-		<!-- 待办任务
+		<!-- 待办任务 -->	
 	<div class="panel panel-danger">
 		<div class="panel-heading"><span class="glyphicon glyphicon-th-large" aria-hidden="true"></span> 待办任务</div>
 	  <div class="panel-body">
@@ -52,7 +52,7 @@
 			</tbody>
 		</table>
 	</div>
-	</div> -->	
+	</div>
 	
 	<!-- 流程定义 -->
 	<div class="panel panel-primary">
@@ -64,6 +64,7 @@
 					<th>ID</th>
 					<th>Name</th>
 					<th>版本</th>
+					<th>key</th>
 					<th>操作</th>
 				</tr>
 			</thead>
@@ -73,6 +74,7 @@
 						<td>${item.id}</td>
 						<td>${item.name}</td>
 						<td>${item.version}</td>
+						<td>${item.key}</td>
 						<td><a href="#" class="delete" data-url="<%=request.getContextPath()%>/leave/del?deploymentId=${item.deploymentId}">删除</a>
 						<a data-url="<%=request.getContextPath()%>/leave/start?id=${item.id}&userName=${userName}" href="#" id="start">发起</a>
 						</td>

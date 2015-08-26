@@ -14,6 +14,7 @@ import org.jbpm.api.ProcessInstance;
 import org.jbpm.api.RepositoryService;
 import org.jbpm.api.TaskService;
 import org.jbpm.api.history.HistoryTask;
+import org.jbpm.api.model.Activity;
 import org.jbpm.api.task.Task;
 
 /**
@@ -110,10 +111,16 @@ public class JBPMUtil {
 	 * @return 返回流程定义id
 	 */
 	public String deployNew(String resourceName) {
+		return repositoryService
+				.createDeployment() //现在要部署流程定义
+				.addResourceFromClasspath(resourceName)//添加流程定义文件
+				.deploy();//部署，将流程定义的相关信息插入数据库\
+	}
+
+	public String deployNew(String resourceName,String key) {
 		return repositoryService.createDeployment().addResourceFromClasspath(
 				resourceName).deploy();
 	}
-
 	
 	/**
 	 * 部署新流程定义(zip)
@@ -136,8 +143,17 @@ public class JBPMUtil {
 	 */
 	
 	public ProcessInstance startPIById(String id,Map<String,Object> map){	
-		
 		return executionService.startProcessInstanceById(id, map);
+		
+	}
+	/**
+	 * 开始一个流程实例
+	 * @param key
+	 * @param map
+	 * @return
+	 */
+	public ProcessInstance startPIByKey(String key,Map<String,Object> map){	
+		return executionService.startProcessInstanceByKey(key, map);
 		
 	}
 	
@@ -149,7 +165,7 @@ public class JBPMUtil {
 	
 	public void completeTask(String taskId,Map map){
 		
-		taskService.completeTask(taskId, map);	
+		taskService.completeTask(taskId, map);
 	}
 	
 	/**
@@ -174,16 +190,30 @@ public class JBPMUtil {
 	 * 获得所有发布了的流程
 	 * @return
 	 */
-	public List<ProcessDefinition> getAllPdList(){
+	public List<ProcessDefinition> getAllProcessDefinitionList(){
 		return repositoryService.createProcessDefinitionQuery().list();
+	}
+	
+	public List<ProcessDefinition> getProcessDefinitionByKey(String key){
+		return repositoryService.createProcessDefinitionQuery().processDefinitionKey(key).list();
+	}
+	public List<ProcessDefinition> getProcessDefinitionByName(String name){
+		return repositoryService.createProcessDefinitionQuery().processDefinitionName(name).list();
+	}
+	public ProcessDefinition getProcessDefinitionById(String id){
+		return repositoryService.createProcessDefinitionQuery().processDefinitionId(id).uniqueResult();
 	}
 	
 	/**
 	 * 获得所有流程实例
 	 * @return
 	 */
-	public List<ProcessInstance> getAllPiList(){
+	public List<ProcessInstance> getAllProcessInstanceList(){
 		return executionService.createProcessInstanceQuery().list();
+	}
+	
+	public List<ProcessInstance> getProcessInstanceByKey(String key){
+		return executionService.createProcessInstanceQuery().processInstanceKey(key).list();
 	}
 	
 	/**
@@ -229,8 +259,6 @@ public class JBPMUtil {
 		return taskService.getTask(taskId);
 		
 	}
-	
-	
 
 	/**
 	 * 级联删除流程定义，直接删除该流程定义下的所有实例

@@ -33,7 +33,7 @@
 	    <label for="exampleInputName2">设置流程</label>
 	    <select class="form-control" name="flowName">
 	     	  <option value=""></option>
-			  <option value="leave">三部认证</option>
+			  <option value="three">三部认证</option>
 			  <option value="two">二部认证</option>
 			</select>
 	  </div>

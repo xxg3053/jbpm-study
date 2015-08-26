@@ -14,7 +14,7 @@ $(document).ready(function(){
 				var activities = data.activities;
 				var tmpl = "";
 				for(var i=0;i<activities.length;i++){
-				    var ac = activities[i];
+				    var ac = activities[i].activityName;
 				    if(active==ac){
 				    	tmpl += '<li class="active">'+ac+'</li>';
 				    }else{

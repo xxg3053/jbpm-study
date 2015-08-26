@@ -7,6 +7,7 @@ import java.util.Set;
 import org.jbpm.api.ProcessDefinition;
 import org.jbpm.api.ProcessInstance;
 import org.jbpm.api.history.HistoryTask;
+import org.jbpm.api.model.Activity;
 import org.jbpm.api.model.ActivityCoordinates;
 import org.jbpm.api.task.Task;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,10 @@ public interface JBPMService {
 	
 	public List<Task> getTaskListByPerson(String assignee);	//所有任务列表
 	
+	public Task getTask(String taskId);
+	
+	public Activity getActivity(String activityName,String key);
+	
 	public List<HistoryTask> getHistoryTaskListByPerson(String assignee);//历史任务
 	
 	public void checkReply(String taskId,int result,String name);		//经理完成任务，返回一个result结果
@@ -30,8 +35,11 @@ public interface JBPMService {
 	public void addReply(String taskId,String outcome);
 	
 	public List<ProcessDefinition> getAllPd(); //获得所有流程定义
+	public List<ProcessDefinition> getPdByKey(String key);
+	public ProcessDefinition getPdById(String id);
 	
 	public List<ProcessInstance> getAllPI();//获取所有流程实例
+	public List<ProcessInstance> getPiByKey(String key);
 	
 	public ProcessInstance getPIById(String id);//根据id获得流程实例
 	
@@ -41,5 +49,5 @@ public interface JBPMService {
 	
 	public void deleteProcessInstanceCascade(String processInstanceId);
 	
-	public Map<String,Object> getAssigneeActivities(String assignee);
+	public Map<String,Object> getAssigneeActivities(String assignee,String key);
 }

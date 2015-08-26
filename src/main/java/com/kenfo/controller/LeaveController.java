@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.inject.internal.Lists;
 import com.google.inject.internal.Maps;
 import com.kenfo.service.JBPMService;
+import com.mangofactory.swagger.annotations.ApiIgnore;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -44,6 +45,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Controller
 @RequestMapping("/leave")
 @Api(basePath = "/",value = "/leave", description = "请假流程", position = 3)
+@ApiIgnore
 public class LeaveController {
 
 	private static Logger log = LoggerFactory.getLogger(LeaveController.class);
@@ -79,10 +81,11 @@ public class LeaveController {
 	@RequestMapping(value="/doSetting",method=RequestMethod.POST)
 	public String doSetting(String flowName,HttpSession session,  Map<String,Object> model){
 		session.setAttribute("flowName", flowName);
-		List<ProcessDefinition> pdList = jBPMService.getAllPd();
+		List<ProcessDefinition> pdList = jBPMService.getPdByKey(flowName);
 		for(ProcessDefinition df:pdList){
 			jBPMService.deleteDeploymentCascade(df.getDeploymentId());
 		}
+		 jBPMService.deployNew(flowName+".jpdl.xml");
 		return "redirect:index";
 	}
 	
@@ -114,30 +117,30 @@ public class LeaveController {
 	@ResponseBody
 	@RequestMapping(value="/start",method=RequestMethod.GET)
 	@ApiOperation(value = "开始一个流程", httpMethod = "GET", response = Map.class, 
-		notes = "根据用户和流程名称开启流程，目前流程有两种：三成认证(leave)和两次认证(two)")
+		notes = "根据用户和流程名称开启流程，目前流程有两种：三成认证(three)和两次认证(two)")
 	public Map<String,Object> start(
 			@ApiParam(required = true, name = "userName", value = "用户名") String userName,
 			@ApiParam(required = true, name = "flowName", value = "流程名称") String flowName,
 			Model model){
 		if(StringUtils.isEmpty(flowName)){
-			flowName = "leave";
+			flowName = "three";
 		}
 		//查询用户是否存在未完成的流程		
 	   List<Task> taskList = jBPMService.getTaskListByPerson(userName);
 		if(taskList.size() == 0){
 			 //定义
-			 List<ProcessDefinition> pdList = jBPMService.getAllPd();
+			 List<ProcessDefinition> pdList = jBPMService.getPdByKey(flowName);
 			 if(pdList.size()==0){
 				//流程发布
 				 jBPMService.deployNew(flowName+".jpdl.xml");
 			 }
 			
-			 ProcessDefinition pd = jBPMService.getAllPd().get(0);
+			 ProcessDefinition pd = jBPMService.getPdByKey(flowName).get(0);
 			//如果没有则流程开始
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("owner", userName);
 			//开始一个实例
-			List<ProcessInstance> piList = jBPMService.getAllPI();
+			List<ProcessInstance> piList = jBPMService.getPiByKey(flowName);
 			if(piList.size()==0){
 				jBPMService.startPI(pd.getId(), map);
 			}
@@ -160,10 +163,12 @@ public class LeaveController {
 	@RequestMapping(value="/tasks/{userName}",method=RequestMethod.GET)
 	@ApiOperation(value = "获取流程导航", httpMethod = "GET", response = Map.class, notes = "获取流程导航")
 	public Map<String,Object> getActivitiesJson(
-			@ApiParam(required = true, name = "userName", value = "用户名") @PathVariable String userName){
+			@ApiParam(required = true, name = "userName", value = "用户名") @PathVariable String userName,
+			HttpSession session
+			){
 		
 		
-		return  jBPMService.getAssigneeActivities(userName);
+		return  jBPMService.getAssigneeActivities(userName,(String)session.getAttribute("flowName"));
 	}
 	
 	
@@ -213,7 +218,7 @@ public class LeaveController {
 		String flowName = (String)session.getAttribute("flowName");
 		System.out.println("flowName"+flowName);
 		Map<String,Object> result = Maps.newHashMap();
-		if("leave".equals(flowName)){
+		if("three".equals(flowName)){
 			//身份验证
 			jBPMService.addReply(taskId, "to 身份验证");
 			

@@ -70,6 +70,7 @@
 		<property name="defaultEncoding" value="UTF-8" />
 		<property name="resolveLazily" value="true" />
 	</bean>
-
+	<!-- 
 	 <bean class="com.mangofactory.swagger.configuration.SpringSwaggerConfig" />
+	  -->
 </beans>
